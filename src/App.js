@@ -1,50 +1,40 @@
 import React, { useState } from 'react';
 import DeckImporter from './components/DeckImporter';
-import Battlefield  from './components/Battlefield'; // assume you’ll adapt it next
+import PlayScreen from './components/PlayScreen';
 
 export default function App() {
   const [gameStarted, setGameStarted] = useState(false);
   const [decks, setDecks] = useState({ 1: [], 2: [] });
 
-  // called by each importer
+  // Called when each DeckImporter loads its deck
   const handleDeckLoaded = (player, deck) => {
     setDecks(current => ({ ...current, [player]: deck }));
   };
 
   if (!gameStarted) {
-    // LOBBY VIEW
+    // Lobby view: two importers + Start Game button
     return (
       <div style={{ padding: '1rem' }}>
         <button
           onClick={() => setGameStarted(true)}
-          style={{ marginBottom: '1rem', padding: '0.5rem 1rem' }}
+          style={{ padding: '0.5rem 1rem', marginBottom: '1rem', fontSize: '1rem' }}
         >
           Start Game
         </button>
-
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <DeckImporter
-            player={1}
-            onDeckLoaded={deck => handleDeckLoaded(1, deck)}
-          />
           <DeckImporter
             player={2}
             onDeckLoaded={deck => handleDeckLoaded(2, deck)}
+          />
+          <DeckImporter
+            player={1}
+            onDeckLoaded={deck => handleDeckLoaded(1, deck)}
           />
         </div>
       </div>
     );
   }
 
-  // BATTLEFIELD VIEW
-  return (
-    <div style={{ padding: '1rem' }}>
-      <h1>Battlefield</h1>
-      {/* 
-        For now, just render your Battlefield component.
-        Later you can pass `decks` into it to populate hands, etc.
-      */}
-      <Battlefield />
-    </div>
-  );
+  // Once game is started, render PlayScreen with decks prop
+  return <PlayScreen decks={decks} />;
 }
